@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101827">
+<title>Maç Analiz Pro</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#101827;color:white;font-family:Arial;padding:20px}
+header{padding:20px 0}
+h1{color:#35d39a;margin-bottom:5px}
+.card{background:#1d293b;padding:18px;border-radius:14px;margin:16px 0}
+label{display:block;margin:12px 0 6px}
+input,select,button{width:100%;padding:13px;border:0;border-radius:9px;font-size:16px}
+input,select{background:#334155;color:white}
+button{background:#20b981;color:#071b16;font-weight:bold;margin-top:18px}
+#result{line-height:1.8;font-size:17px}
+small{color:#aab7c8}
+</style>
+</head>
+<body>
+<header>
+<h1>⚽ MAÇ ANALİZ PRO</h1>
+<small>Akıllı futbol analiz merkezi</small>
+</header>
+<div class="card">
+<h3>📊 Oran Analizi</h3>
+<label>Analiz türü</label>
+<select id="market">
+<option>2.5 Gol Alt / Üst</option>
+<option>Karşılıklı Gol Var / Yok</option>
+</select>
+<label>İlk seçeneğin oranı</label>
+<input id="odd1" type="number" step="0.01" placeholder="Örn: 1.75">
+<label>İkinci seçeneğin oranı</label>
+<input id="odd2" type="number" step="0.01" placeholder="Örn: 2.00">
+<button onclick="analyze()">ORANLARI ANALİZ ET</button>
+</div>
+<div class="card">
+<h3>📈 Analiz Sonucu</h3>
+<div id="result">Oranları gir, analiz başlasın.</div>
+</div>
+<div class="card">
+<h3>🚀 Sonraki aşamalar</h3>
+<p>• Canlı maç verileri</p>
+<p>• Günün maçları</p>
+<p>• Nesine oran bağlantısı (erişim uygunsa)</p>
+<p>• Takım istatistikleri ve tahminler</p>
+</div>
+<script>
+function analyze(){
+let a=Number(document.getElementById('odd1').value);
+let b=Number(document.getElementById('odd2').value);
+let r=document.getElementById('result');
+if(a<=1||b<=1||!a||!b){
+r.innerText="Lütfen 1'den büyük iki geçerli oran gir.";
+return;
+}
+let p1=100/a, p2=100/b;
+let total=p1+p2;
+let x=p1/total*100, y=p2/total*100;
+r.innerHTML="İlk seçenek: <b>"+x.toFixed(1)+"%</b><br>İkinci seçenek: <b>"+y.toFixed(1)+"%</b><br>Oran marjı: "+(total-100).toFixed(1)+"%";
+}
+</script>
+</body>
+</html>
