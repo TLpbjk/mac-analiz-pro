@@ -23677,4 +23677,56 @@ r.innerHTML="İlk seçenek: <b>"+x.toFixed(1)+"%</b><br>İkinci seçenek: <b>"+y
 }
 </script>
 </body>
+ <div class="container">
+  <h1>⚽ MAÇ ANALİZ PRO</h1>
+  <p>Profesyonel Maç Analiz Sistemi</p>
+
+  <h3>Maç Bilgileri</h3>
+  <input type="text" id="ev" placeholder="Ev sahibi takım">
+  <input type="text" id="dep" placeholder="Deplasman takımı">
+  <button onclick="analiz()">MAÇI ANALİZ ET</button>
+
+  <div id="sonuc"></div>
+</div>
+
+<style>
+.container {
+  max-width: 600px;
+  margin: 30px auto;
+  padding: 20px;
+  background: #151d2e;
+  color: white;
+  text-align: center;
+  border-radius: 15px;
+}
+.container input {
+  display: block;
+  width: 90%;
+  padding: 12px;
+  margin: 12px auto;
+}
+.container button {
+  padding: 14px;
+  background: #16a34a;
+  color: white;
+  border: 0;
+  border-radius: 8px;
+}
+</style>
+
+<script>
+function analiz() {
+  let ev = document.getElementById("ev").value;
+  let dep = document.getElementById("dep").value;
+
+  if (!ev || !dep) {
+    alert("İki takımın adını girin.");
+    return;
+  }
+
+  document.getElementById("sonuc").innerHTML =
+    "<h3>" + ev + " - " + dep + "</h3>" +
+    "<p>Maç analizi hazırlanacak.</p>";
+}
+</script>   
 </html>
