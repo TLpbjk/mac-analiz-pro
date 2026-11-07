@@ -5,999 +5,207 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#101827">
+
 <title>Maç Analiz Pro</title>
+
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#101827;color:white;font-family:Arial;padding:20px}
-header{padding:20px 0}
-h1{color:#35d39a;margin-bottom:5px}
-.card{background:#1d293b;padding:18px;border-radius:14px;margin:16px 0}
-label{display:block;margin:12px 0 6px}
-input,select,button{width:100%;padding:13px;border:0;border-radius:9px;font-size:16px}
-input,select{background:#334155;color:white}
-button{background:#20b981;color:#071b16;font-weight:bold;margin-top:18px}
-#result{line-height:1.8;font-size:17px}
-small{color:#aab7c8}
-</style>{
-    "get": "fixtures",
-    "parameters": {
-        "league": "203",
-        "season": "2024",
-        "timezone": "Europe\/Istanbul"
-    },
-    "errors": [],
-    "results": 342,
-    "paging": {
-        "current": 1,
-        "total": 1
-    },
-    "response": [{
-        "fixture": {
-            "id": 1237855,
-            "referee": "T. Doman",
-            "timezone": "Europe\/Istanbul",
-            "date": "2024-08-09T21:00:00+03:00",
-            "timestamp": 1723226400,
-            "periods": {
-                "first": 1723226400,
-                "second": 1723230000
-            },
-            "venue": {
-                "id": 22761,
-                "name": "RAMS Park",
-                "city": "\u0130stanbul"
-            },
-            "status": {
-                "long": "Match Finished",
-                "short": "FT",
-                "elapsed": 90,
-                "extra": null
-            }
-        },
-        "league": {
-            "id": 203,
-            "name": "S\u00fcper Lig",
-            "country": "Turkey",
-            "logo": "https:\/\/media.api-sports.io\/football\/leagues\/203.png",
-            "flag": "https:\/\/media.api-sports.io\/flags\/tr.svg",
-            "season": 2024,
-            "round": "Regular Season - 1",
-            "standings": true
-        },
-        "teams": {
-            "home": {
-                "id": 645,
-                "name": "Galatasaray",
-                "logo": "https:\/\/media.api-sports.io\/football\/teams\/645.png",
-                "winner": true
-            },
-            "away": {
-                "id": 3575,
-                "name": "Hatayspor",
-                "logo": "https:\/\/media.api-sports.io\/football\/teams\/3575.png",
-                "winner": false
-            }
-        },
-        "goals": {
-            "home": 2,
-            "away": 1
-        },
-        "score": {
-            "halftime": {
-                "home": 0,
-                "away": 0
-            },
-            "fulltime": {
-                "home": 2,
-                "away": 1
-            },
-            "extratime": {
-                "home": null,
-                "away": null
-            },
-            "penalty": {
-                "home": null,
-                "away": null
-            }
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #101827;
+    color: white;
+    font-family: Arial, sans-serif;
+    padding: 20px;
+}
+
+header {
+    padding: 20px 0;
+}
+
+h1 {
+    color: #35d39a;
+    margin-bottom: 5px;
+}
+
+.card {
+    background: #1d293b;
+    padding: 18px;
+    border-radius: 14px;
+    margin: 16px 0;
+}
+
+label {
+    display: block;
+    margin: 12px 0 6px;
+}
+
+input, select, button {
+    width: 100%;
+    padding: 13px;
+    border: 0;
+    border-radius: 9px;
+    font-size: 16px;
+}
+
+input, select {
+    background: #334155;
+    color: white;
+}
+
+button {
+    background: #20b981;
+    color: #071b16;
+    font-weight: bold;
+    margin-top: 18px;
+    cursor: pointer;
+}
+
+#result {
+    line-height: 1.8;
+    font-size: 17px;
+}
+
+small {
+    color: #aab7c8;
+}
+
+.match {
+    background: #334155;
+    padding: 14px;
+    border-radius: 9px;
+    margin: 10px 0;
+}
+
+.match strong {
+    color: #35d39a;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>⚽ Maç Analiz Pro</h1>
+    <small>Profesyonel Futbol Analiz Sistemi</small>
+</header>
+
+<div class="card">
+    <h3>Maç Analiz Paneli</h3>
+
+    <label>Lig ID</label>
+    <input type="number" id="league" value="203">
+
+    <label>Sezon</label>
+    <input type="number" id="season" value="2024">
+
+    <button id="loadMatches">
+        Maçları Getir
+    </button>
+</div>
+
+<div class="card">
+    <h3>Maç Sonuçları</h3>
+    <div id="result">
+        Maçlar henüz yüklenmedi.
+    </div>
+</div>
+
+<script>
+"use strict";
+
+const result = document.getElementById("result");
+
+document.getElementById("loadMatches")
+.addEventListener("click", maclariGetir);
+
+async function maclariGetir() {
+
+    const league =
+        document.getElementById("league").value;
+
+    const season =
+        document.getElementById("season").value;
+
+    if (!league || !season) {
+        result.textContent =
+            "Lütfen lig ve sezon bilgilerini girin.";
+        return;
+    }
+
+    result.textContent = "Maçlar yükleniyor...";
+
+    try {
+
+        // API bağlantısı sonraki bölümde eklenecek.
+        const API_URL = "API_ADRESINIZ";
+
+        const response = await fetch(
+            `${API_URL}?league=${encodeURIComponent(league)}&season=${encodeURIComponent(season)}&timezone=Europe/Istanbul`
+        );
+
+        if (!response.ok) {
+            throw new Error(
+                "API bağlantı hatası: " + response.status
+            );
         }
-    }, {
-        "fixture": {
-            "id": 1237849,
-            "referee": "M. Meto\u011flu",
-            "timezone": "Europe\/Istanbul",
-            "date": "2024-08-10T19:15:00+03:00",
-            "timestamp": 1723306500,
-            "periods": {
-                "first": 1723306500,
-                "second": 1723310100
-            },
-            "venue": {
-                "id": 1585,
-                "name": "Recep Tayyip Erdo\u011fan Stadyumu",
-                "city": "\u0130stanbul"
-            },
-            "status": {
-                "long": "Match Finished",
-                "short": "FT",
-                "elapsed": 90,
-                "extra": null
-            }
-        },
-        "league": {
-            "id": 203,
-            "name": "S\u00fcper Lig",
-            "country": "Turkey",
-            "logo": "https:\/\/media.api-sports.io\/football\/leagues\/203.png",
-            "flag": "https:\/\/media.api-sports.io\/flags\/tr.svg",
-            "season": 2024,
-            "round": "Regular Season - 1",
-            "standings": true
-        },
-        "teams": {
-            "home": {
-                "id": 1004,
-                "name": "Kas\u0131mpa\u015fa",
-                "logo": "https:\/\/media.api-sports.io\/football\/teams\/1004.png",
-                "winner": false
-            },
-            "away": {
-                "id": 607,
-                "name": "Konyaspor",
-                "logo": "https:\/\/media.api-sports.io\/football\/teams\/607.png",
-                "winner": true
-            }
-        },
-        "goals": {
-            "home": 2,
-            "away": 3
-        },
-        "score": {
-            "halftime": {
-                "home": 0,
-                "away": 1
-            },
-            "fulltime": {
-                "home": 2,
-                "away": 3
-            },
-            "extratime": {
-                "home": null,
-                "away": null
-            },
-            "penalty": {
-                "home": null,
-                "away": null
-            }
+
+        const data = await response.json();
+
+        if (!Array.isArray(data.response)) {
+            throw new Error("API yanıt formatı geçersiz.");
         }
-    }, {
-        "fixture": {
-            "id": 1237853,
-            "referee": "A. Karao\u011flan",
-            "timezone": "Europe\/Istanbul",
-            "date": "2024-08-10T21:45:00+03:00",
-            "timestamp": 1723315500,
-            "periods": {
-                "first": 1723315500,
-                "second": 1723319100
-            },
-            "venue": {
-                "id": 1581,
-                "name": "\u00dclker Stadyumu Fenerbah\u00e7e \u015e\u00fckr\u00fc Saraco\u011flu Spor Kompleksi",
-                "city": "\u0130stanbul"
-            },
-            "status": {
-                "long": "Match Finished",
-                "short": "FT",
-                "elapsed": 90,
-                "extra": null
-            }
-        },
-        "league": {
-            "id": 203,
-            "name": "S\u00fcper Lig",
-            "country": "Turkey",
-            "logo": "https:\/\/media.api-sports.io\/football\/leagues\/203.png",
-            "flag": "https:\/\/media.api-sports.io\/flags\/tr.svg",
-            "season": 2024,
-            "round": "Regular Season - 1",
-            "standings": true
-        },
-        "teams": {
-            "home": {
-                "id": 611,
-                "name": "Fenerbah\u00e7e",
-                "logo": "https:\/\/media.api-sports.io\/football\/teams\/611.png",
-                "winner": true
-            },
-            "away": {
-                "id": 3563,
-                "name": "Adana Demirspor",
-                "logo": "https:\/\/media.api-sports.io\/football\/teams\/3563.png",
-                "winner": false
-            }
-        },
-        "goals": {
-            "home": 1,
-            "away": 0
-        },
-        "score": {
-            "halftime": {
-                "home": 1,
-                "away": 0
-            },
-            "fulltime": {
-                "home": 1,
-                "away": 0
-            },
-            "extratime": {
-                "home": null,
-                "away": null
-            },
-            "penalty": {
-                "home": null,
-                "away": null
-            }
+
+        if (data.response.length === 0) {
+            result.textContent = "Maç bulunamadı.";
+            return;
         }
-    }, {
-        "fixture": {
-            "id": 1237851,
-            "referee": "Z. K\u00fc\u00e7\u00fck",
-            "timezone": "Europe\/Istanbul",
-            "date": "2024-08-10T21:45:00+03:00",
-            "timestamp": 1723315500,
-            "periods": {
-                "first": 1723315500,
-                "second": 1723319100
-            },
-            "venue": {
-                "id": 19220,
-                "name": "Corendon Airlines Park",
-                "city": "Antalya"
-            },
-            "status": {
-                "long": "Match Finished",
-                "short": "FT",
-                "elapsed": 90,
-                "extra": null
-            }
-        },
-        "league": {
-            "id": 203,
-            "name": "S\u00fcper Lig",
-            "country": "Turkey",
-            "logo": "https:\/\/media.api-sports.io\/football\/leagues\/203.png",
-            "flag": "https:\/\/media.api-sports.io\/flags\/tr.svg",
-            "season": 2024,
-            "round": "Regular Season - 1",
-            "standings": true
-        },
-        "teams": {
-            "home": {
-                "id": 1005,
-                "name": "Antalyaspor",
-                "logo": "https:\/\/media.api-sports.io\/football\/teams\/1005.png",
-                "winner": null
-            },
-            "away": {
-                "id": 994,
-                "name": "G\u00f6ztepe",
-                "logo": "https:\/\/media.api-sports.io\/football\/teams\/994.png",
-                "winner": null
-            }
-        },
-        "goals": {
-            "home": 0,
-            "away": 0
-        },
-        "score": {
-            "halftime": {
-                "home": 0,
-                "away": 0
-            },
-            "fulltime": {
-                "home": 0,
-                "away": 0
-            },
-            "extratime": {
-                "home": null,
-                "away": null
-            },
-            "penalty": {
-                "home": null,
-                "away": null
-            }
-        }
-    }, {
-        "fixture": {
-            "id": 1237852,
-            "referee": "C. Ayd\u0131n",
-            "timezone": "Europe\/Istanbul",
-            "date": "2024-08-11T19:15:00+03:00",
-            "timestamp": 1723392900,
-            "periods": {
-                "first": 1723392900,
-                "second": 1723396500
-            },
-            "venue": {
-                "id": 20425,
-                "name": "BG Group 4 Eyl\u00fcl Stadyumu",
-                "city": "Sivas"
-            },
-            "status": {
-                "long": "Match Finished",
-                "short": "FT",
-                "elapsed": 90,
-                "extra": null
-            }
-        },
-        "league": {
-            "id": 203,
-            "name": "S\u00fcper Lig",
-            "country": "Turkey",
-            "logo": "https:\/\/media.api-sports.io\/football\/leagues\/203.png",
-            "flag": "https:\/\/media.api-sports.io\/flags\/tr.svg",
-            "season": 2024,
-            "round": "Regular Season - 1",
-            "standings": true
-        },
-        "teams": {
-            "home": {
-                "id": 1002,
-                "name": "Sivasspor",
-                "logo": "https:\/\/media.api-sports.io\/football\/teams\/1002.png",
-                "winner": null
-            },
-            "away": {
-                "id": 998,
-                "name": "Trabzonspor",
-                "logo": "https:\/\/media.api-sports.io\/football\/teams\/998.png",
-                "winner": null
-            }
-        },
-        "goals": {
-            "home": 0,
-            "away": 0
-        },
-        "score": {
-            "halftime": {
-                "home": 0,
-                "away": 0
-            },
-            "fulltime": {
-                "home": 0,
-                "away": 0
-            },
-            "extratime": {
-                "home": null,
-                "away": null
-            },
-            "penalty": {
-                "home": null,
-                "away": null
-            }
-        }
-    }, {
-        "fixture": {
-            "id": 1237850,
-            "referee": "O. \u00c7ak\u0131r",
-            "timezone": "Europe\/Istanbul",
-            "date": "2024-08-11T21:45:00+03:00",
-            "timestamp": 1723401900,
-            "periods": {
-                "first": 1723401900,
-                "second": 1723405500
-            },
-            "venue": {
-                "id": 19219,
-                "name": "K\u0131rb\u0131y\u0131k Holding Stadyumu",
-                "city": "Alanya"
-            },
-            "status": {
-                "long": "Match Finished",
-                "short": "FT",
-                "elapsed": 90,
-                "extra": null
-            }
-        },
-        "league": {
-            "id": 203,
-            "name": "S\u00fcper Lig",
-            "country": "Turkey",
-            "logo": "https:\/\/media.api-sports.io\/football\/leagues\/203.png",
-            "flag": "https:\/\/media.api-sports.io\/flags\/tr.svg",
-            "season": 2024,
-            "round": "Regular Season - 1",
-            "standings": true
-        },
-        "teams": {
-            "home": {
-                "id": 996,
-                "name": "Alanyaspor",
-                "logo": "https:\/\/media.api-sports.io\/football\/teams\/996.png",
-                "winner": null
-            },
-            "away": {
-                "id": 3588,
-                "name": "Ey\u00fcpspor",
-                "logo": "https:\/\/media.api-sports.io\/football\/teams\/3588.png",
-                "winner": null
-            }
-        },
-        "goals": {
-            "home": 1,
-            "away": 1
-        },
-        "score": {
-            "halftime": {
-                "home": 0,
-                "away": 0
-            },
-            "fulltime": {
-                "home": 1,
-                "away": 1
-            },
-            "extratime": {
-                "home": null,
-                "away": null
-            },
-            "penalty": {
-                "home": null,
-                "away": null
-            }
-        }
-    }, {
-        "fixture": {
-            "id": 1237854,
-            "referee": "A. \u015eansalan",
-            "timezone": "Europe\/Istanbul",
-            "date": "2024-08-11T21:45:00+03:00",
-            "timestamp": 1723401900,
-            "periods": {
-                "first": 1723401900,
-                "second": 1723405500
-            },
-            "venue": {
-                "id": 11925,
-                "name": "Samsun Yeni 19 May\u0131s Stadyumu",
-                "city": "Samsun"
-            },
-            "status": {
-                "long": "Match Finished",
-                "short": "FT",
-                "elapsed": 90,
-                "extra": null
-            }
-        },
-        "league": {
-            "id": 203,
-            "name": "S\u00fcper Lig",
-            "country": "Turkey",
-            "logo": "https:\/\/media.api-sports.io\/football\/leagues\/203.png",
-            "flag": "https:\/\/media.api-sports.io\/flags\/tr.svg",
-            "season": 2024,
-            "round": "Regular Season - 1",
-            "standings": true
-        },
-        "teams": {
-            "home": {
-                "id": 3603,
-                "name": "Samsunspor",
-                "logo": "https:\/\/media.api-sports.io\/football\/teams\/3603.png",
-                "winner": false
-            },
-            "away": {
-                "id": 549,
-                "name": "Be\u015fikta\u015f",
-                "logo": "https:\/\/media.api-sports.io\/football\/teams\/549.png",
-                "winner": true
-            }
-        },
-        "goals": {
-            "home": 0,
-            "away": 2
-        },
-        "score": {
-            "halftime": {
-                "home": 0,
-                "away": 2
-            },
-            "fulltime": {
-                "home": 0,
-                "away": 2
-            },
-            "extratime": {
-                "home": null,
-                "away": null
-            },
-            "penalty": {
-                "home": null,
-                "away": null
-            }
-        }
-    }, {
-        "fixture": {
-            "id": 1237856,
-            "referee": "D. Tonusluo\u011flu",
-            "timezone": "Europe\/Istanbul",
-            "date": "2024-08-12T21:00:00+03:00",
-            "timestamp": 1723485600,
-            "periods": {
-                "first": 1723485600,
-                "second": 1723489200
-            },
-            "venue": {
-                "id": 1580,
-                "name": "\u00c7aykur Didi Stadyumu",
-                "city": "Rize"
-            },
-            "status": {
-                "long": "Match Finished",
-                "short": "FT",
-                "elapsed": 90,
-                "extra": null
-            }
-        },
-        "league": {
-            "id": 203,
-            "name": "S\u00fcper Lig",
-            "country": "Turkey",
-            "logo": "https:\/\/media.api-sports.io\/football\/leagues\/203.png",
-            "flag": "https:\/\/media.api-sports.io\/flags\/tr.svg",
-            "season": 2024,
-            "round": "Regular Season - 1",
-            "standings": true
-        },
-        "teams": {
-            "home": {
-                "id": 1007,
-                "name": "Rizespor",
-                "logo": "https:\/\/media.api-sports.io\/football\/teams\/1007.png",
-                "winner": null
-            },
-            "away": {
-                "id": 564,
-                "name": "Ba\u015fak\u015fehir",
-                "logo": "https:\/\/media.api-sports.io\/football\/teams\/564.png",
-                "winner": null
-            }
-        },
-        "goals": {
-            "home": 1,
-            "away": 1
-        },
-        "score": {
-            "halftime": {
-                "home": 1,
-                "away": 1
-            },
-            "fulltime": {
-                "home": 1,
-                "away": 1
-            },
-            "extratime": {
-                "home": null,
-                "away": null
-            },
-            "penalty": {
-                "home": null,
-                "away": null
-            }
-        }
-    }, {
-        "fixture": {
-            "id": 1237857,
-            "referee": "M. T\u00fcrkmen",
-            "timezone": "Europe\/Istanbul",
-            "date": "2024-08-12T21:00:00+03:00",
-            "timestamp": 1723485600,
-            "periods": {
-                "first": 1723485600,
-                "second": 1723489200
-            },
-            "venue": {
-                "id": 2385,
-                "name": "Bodrum \u0130l\u00e7e Stad\u0131",
-                "city": "Bodrum"
-            },
-            "status": {
-                "long": "Match Finished",
-                "short": "FT",
-                "elapsed": 90,
-                "extra": null
-            }
-        },
-        "league": {
-            "id": 203,
-            "name": "S\u00fcper Lig",
-            "country": "Turkey",
-            "logo": "https:\/\/media.api-sports.io\/football\/leagues\/203.png",
-            "flag": "https:\/\/media.api-sports.io\/flags\/tr.svg",
-            "season": 2024,
-            "round": "Regular Season - 1",
-            "standings": true
-        },
-        "teams": {
-            "home": {
-                "id": 3583,
-                "name": "Bodrum FK",
-                "logo": "https:\/\/media.api-sports.io\/football\/teams\/3583.png",
-                "winner": false
-            },
-            "away": {
-                "id": 3573,
-                "name": "Gaziantep FK",
-                "logo": "https:\/\/media.api-sports.io\/football\/teams\/3573.png",
-                "winner": true
-            }
-        },
-        "goals": {
-            "home": 0,
-            "away": 1
-        },
-        "score": {
-            "halftime": {
-                "home": 0,
-                "away": 0
-            },
-            "fulltime": {
-                "home": 0,
-                "away": 1
-            },
-            "extratime": {
-                "home": null,
-                "away": null
-            },
-            "penalty": {
-                "home": null,
-                "away": null
-            }
-        }
-    }, {
-        "fixture": {
-            "id": 1237862,
-            "referee": "D. Tonusluo\u011flu",
-            "timezone": "Europe\/Istanbul",
-            "date": "2024-08-16T21:00:00+03:00",
-            "timestamp": 1723831200,
-            "periods": {
-                "first": 1723831200,
-                "second": 1723834800
-            },
-            "venue": {
-                "id": 22762,
-                "name": "Meda\u015f Konya B\u00fcy\u00fck\u015fehir Stadyumu",
-                "city": "Konya"
-            },
-            "status": {
-                "long": "Match Finished",
-                "short": "FT",
-                "elapsed": 90,
-                "extra": null
-            }
-        },
-        "league": {
-            "id": 203,
-            "name": "S\u00fcper Lig",
-            "country": "Turkey",
-            "logo": "https:\/\/media.api-sports.io\/football\/leagues\/203.png",
-            "flag": "https:\/\/media.api-sports.io\/flags\/tr.svg",
-            "season": 2024,
-            "round": "Regular Season - 2",
-            "standings": true
-        },
-        "teams": {
-            "home": {
-                "id": 607,
-                "name": "Konyaspor",
-                "logo": "https:\/\/media.api-sports.io\/football\/teams\/607.png",
-                "winner": false
-            },
-            "away": {
-                "id": 645,
-                "name": "Galatasaray",
-                "logo": "https:\/\/media.api-sports.io\/football\/teams\/645.png",
-                "winner": true
-            }
-        },
-        "goals": {
-            "home": 1,
-            "away": 2
-        },
-        "score": {
-            "halftime": {
-                "home": 1,
-                "away": 1
-            },
-            "fulltime": {
-                "home": 1,
-                "away": 2
-            },
-            "extratime": {
-                "home": null,
-                "away": null
-            },
-            "penalty": {
-                "home": null,
-                "away": null
-            }
-        }
-    }, {
-        "fixture": {
-            "id": 1237866,
-            "referee": "T. Doman",
-            "timezone": "Europe\/Istanbul",
-            "date": "2024-08-17T19:15:00+03:00",
-            "timestamp": 1723911300,
-            "periods": {
-                "first": 1723911300,
-                "second": 1723914900
-            },
-            "venue": {
-                "id": 19613,
-                "name": "RHG Enert\u00fcrk Enerji Stadyumu",
-                "city": "Kayseri"
-            },
-            "status": {
-                "long": "Match Finished",
-                "short": "FT",
-                "elapsed": 90,
-                "extra": null
-            }
-        },
-        "league": {
-            "id": 203,
-            "name": "S\u00fcper Lig",
-            "country": "Turkey",
-            "logo": "https:\/\/media.api-sports.io\/football\/leagues\/203.png",
-            "flag": "https:\/\/media.api-sports.io\/flags\/tr.svg",
-            "season": 2024,
-            "round": "Regular Season - 2",
-            "standings": true
-        },
-        "teams": {
-            "home": {
-                "id": 1001,
-                "name": "Kayserispor",
-                "logo": "https:\/\/media.api-sports.io\/football\/teams\/1001.png",
-                "winner": false
-            },
-            "away": {
-                "id": 1002,
-                "name": "Sivasspor",
-                "logo": "https:\/\/media.api-sports.io\/football\/teams\/1002.png",
-                "winner": true
-            }
-        },
-        "goals": {
-            "home": 1,
-            "away": 2
-        },
-        "score": {
-            "halftime": {
-                "home": 1,
-                "away": 1
-            },
-            "fulltime": {
-                "home": 1,
-                "away": 2
-            },
-            "extratime": {
-                "home": null,
-                "away": null
-            },
-            "penalty": {
-                "home": null,
-                "away": null
-            }
-        }
-    }, {
-        "fixture": {
-            "id": 1237858,
-            "referee": "K. Sa\u011flam",
-            "timezone": "Europe\/Istanbul",
-            "date": "2024-08-17T21:45:00+03:00",
-            "timestamp": 1723920300,
-            "periods": {
-                "first": 1723920300,
-                "second": 1723923900
-            },
-            "venue": {
-                "id": 1583,
-                "name": "G\u00f6ztepe G\u00fcrsel Aksel Stad\u0131",
-                "city": "\u0130zmir"
-            },
-            "status": {
-                "long": "Match Finished",
-                "short": "FT",
-                "elapsed": 90,
-                "extra": null
-            }
-        },
-        "league": {
-            "id": 203,
-            "name": "S\u00fcper Lig",
-            "country": "Turkey",
-            "logo": "https:\/\/media.api-sports.io\/football\/leagues\/203.png",
-            "flag": "https:\/\/media.api-sports.io\/flags\/tr.svg",
-            "season": 2024,
-            "round": "Regular Season - 2",
-            "standings": true
-        },
-        "teams": {
-            "home": {
-                "id": 994,
-                "name": "G\u00f6ztepe",
-                "logo": "https:\/\/media.api-sports.io\/football\/teams\/994.png",
-                "winner": null
-            },
-            "away": {
-                "id": 611,
-                "name": "Fenerbah\u00e7e",
-                "logo": "https:\/\/media.api-sports.io\/football\/teams\/611.png",
-                "winner": null
-            }
-        },
-        "goals": {
-            "home": 2,
-            "away": 2
-        },
-        "score": {
-            "halftime": {
-                "home": 0,
-                "away": 2
-            },
-            "fulltime": {
-                "home": 2,
-                "away": 2
-            },
-            "extratime": {
-                "home": null,
-                "away": null
-            },
-            "penalty": {
-                "home": null,
-                "away": null
-            }
-        }
-    }, {
-        "fixture": {
-            "id": 1237863,
-            "referee": "C. Ayd\u0131n",
-            "timezone": "Europe\/Istanbul",
-            "date": "2024-08-17T21:45:00+03:00",
-            "timestamp": 1723920300,
-            "periods": {
-                "first": 1723920300,
-                "second": 1723923900
-            },
-            "venue": {
-                "id": 11924,
-                "name": "Yeni Adana Stadyumu",
-                "city": "Adana"
-            },
-            "status": {
-                "long": "Match Finished",
-                "short": "FT",
-                "elapsed": 90,
-                "extra": null
-            }
-        },
-        "league": {
-            "id": 203,
-            "name": "S\u00fcper Lig",
-            "country": "Turkey",
-            "logo": "https:\/\/media.api-sports.io\/football\/leagues\/203.png",
-            "flag": "https:\/\/media.api-sports.io\/flags\/tr.svg",
-            "season": 2024,
-            "round": "Regular Season - 2",
-            "standings": true
-        },
-        "teams": {
-            "home": {
-                "id": 3563,
-                "name": "Adana Demirspor",
-                "logo": "https:\/\/media.api-sports.io\/football\/teams\/3563.png",
-                "winner": false
-            },
-            "away": {
-                "id": 1007,
-                "name": "Rizespor",
-                "logo": "https:\/\/media.api-sports.io\/football\/teams\/1007.png",
-                "winner": true
-            }
-        },
-        "goals": {
-            "home": 1,
-            "away": 2
-        },
-        "score": {
-            "halftime": {
-                "home": 0,
-                "away": 1
-            },
-            "fulltime": {
-                "home": 1,
-                "away": 2
-            },
-            "extratime": {
-                "home": null,
-                "away": null
-            },
-            "penalty": {
-                "home": null,
-                "away": null
-            }
-        }
-    }, {
-        "fixture": {
-            "id": 1237860,
-            "referee": "A. Karde\u015fler",
-            "timezone": "Europe\/Istanbul",
-            "date": "2024-08-18T19:15:00+03:00",
-            "timestamp": 1723997700,
-            "periods": {
-                "first": 1723997700,
-                "second": 1724001300
-            },
-            "venue": {
-                "id": 1584,
-                "name": "Ba\u015fak\u015fehir Fatih Terim Stadyumu",
-                "city": "\u0130stanbul"
-            },
-            "status": {
-                "long": "Match Finished",
-                "short": "FT",
-                "elapsed": 90,
-                "extra": null
-            }
-        },
-        "league": {
-            "id": 203,
-            "name": "S\u00fcper Lig",
-            "country": "Turkey",
-            "logo": "https:\/\/media.api-sports.io\/football\/leagues\/203.png",
-            "flag": "https:\/\/media.api-sports.io\/flags\/tr.svg",
-            "season": 2024,
-            "round": "Regular Season - 2",
-            "standings": true
-        },
-        "teams": {
-            "home": {
-                "id": 564,
-                "name": "Ba\u015fak\u015fehir",
-                "logo": "https:\/\/media.api-sports.io\/football\/teams\/564.png",
-                "winner": true
-            },
-            "away": {
-                "id": 996,
-                "name": "Alanyaspor",
-                "logo": "https:\/\/media.api-sports.io\/football\/teams\/996.png",
-                "winner": false
-            }
-        },
-        "goals": {
-            "home": 4,
-            "away": 2
-        },
-        "score": {
-            "halftime": {
-                "home": 1,
-                "away": 2
-            },
-            "fulltime": {
-                "home": 4,
-                "away": 2
-            },
-            "extratime": {
-                "home": null,
-                "away": null
-            },
-            "penalty": {
-                "home": null,
-                "away": null
-            }
-        }
-    }, {
+
+        result.replaceChildren();
+
+        data.response.forEach(item => {
+
+            const fixture = item.fixture;
+            const teams = item.teams;
+            const goals = item.goals;
+
+            const match = document.createElement("div");
+            match.className = "match";
+
+            const title = document.createElement("strong");
+            title.textContent =
+                `${teams.home.name} - ${teams.away.name}`;
+
+            const score = document.createElement("p");
+            score.textContent =
+                `Skor: ${goals.home ?? "-"} : ${goals.away ?? "-"}`;
+
+            const date = document.createElement("small");
+            date.textContent =
+                new Date(fixture.date).toLocaleString("tr-TR", {
+                    timeZone: "Europe/Istanbul"
+                });
+
+            match.append(title, score, date);
+            result.appendChild(match);
+        });
+
+    } catch (error) {
+
+        result.textContent =
+            "Hata: " + error.message;
+
+    }
+}
+</script>
+
+</body>
+</html>
+
+
         "fixture": {
             "id": 1237865,
             "referee": "M. T\u00fcrkmen",
